@@ -149,7 +149,7 @@ public class loginFrom extends javax.swing.JFrame {
         if (username.length() != 0 && password.length() != 0) {
             try {
                 //Query SQL untuk mencari user dengan username dan password (dihash dengan MD5)
-                String sql= "SELECT * FROM user WHERE username=? AND password=md5 (?)";
+                String sql= "SELECT * FROM user WHERE username= ? AND password= md5(?)";
                 
                 //Buat koneksi ke database
                 Connection con = koneksi.konek();

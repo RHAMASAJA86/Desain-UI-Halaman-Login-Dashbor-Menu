@@ -4,17 +4,83 @@
  */
 package alumni202457201031;
 
-/**
- *
- * @author asus
- */
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class Jurusan2 extends javax.swing.JPanel {
 
-    /**
-     * Creates new form Jurusan2
-     */
+    /*
+     * Panggil method dan load_tabel_jurusan dibawah ini tComponents,
+     * agar ketika menu jurusan dibuka, data tabel muncul dan form inputan 
+     * kosong.
+     */ 
     public Jurusan2() {
         initComponents();
+        reset();
+        load_tabel_jurusan();
+    }
+    
+    void reset(){
+        // Kosongkan isi text field kode jurusan
+        tKodejurusan.setText(null);
+        
+        // Aktifkan kembali text field kode kode jurusan agar bisa diedit
+        tKodejurusan.setEditable(true);
+        
+        // Kosongkan isi text field nama jurusan
+        tNamajurusan.setText(null);
+    }
+    
+    void load_tabel_jurusan(){
+        // Membuat objek model tabel baru
+        DefaultTableModel model = new DefaultTableModel();
+        
+        // Menambah kolom kedalam model tabel
+        
+        // Kolom pertama untuk kode jurusan
+        model.addColumn("Kode Jurusan");
+        // Kolom kedua untuk nama jurusan
+        model.addColumn("Nama Jurusan");
+        
+        // Query SQL untuk mengambil semua data dari tabel jurusan
+        String sql = "SELECT * FROM jurusan";
+        
+        try {
+            // Membuka koneksi ke database
+            Connection conn = koneksi.konek();
+            
+            // Membuat statement untuk menjalankan query
+            Statement st = conn.createStatement();
+            
+            // Menjalankan query dan menyimpan hasilnya dalam ResulSet
+            ResultSet rs = st.executeQuery(sql);
+            
+            // Melakukan iterasi untuk setiap baris data hasil query
+            while (rs.next()) {
+                // Mengambil data kolom kode_jur
+                String kodeJurusan = rs.getString("kode_jur");
+                
+                // Mengambil data kolom nama_jurusan
+                String namaJurusan = rs.getString("nama_jurusan");
+                
+                // Membuat array berisi data satu baris
+                Object[] baris = {kodeJurusan, namaJurusan};
+                
+                // Menambah array baris berisi ke dalam model tabel
+                model.addRow(baris);
+            }
+        } catch (SQLException sQLException) {
+            // Menampilkan pesan error jika gagal mengambil data dari database
+            JOptionPane.showMessageDialog(null, "Gagal mengambil data");
+        }
+        
+        // Menampilkan model yang sudah diisi ke dalam tabel GUI
+        tblJurusan.setModel(model);
     }
 
     /**
@@ -33,12 +99,12 @@ public class Jurusan2 extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         tNamajurusan = new javax.swing.JTextField();
         tKodejurusan = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnTambah = new javax.swing.JButton();
+        btnUbah = new javax.swing.JButton();
+        btnHapus = new javax.swing.JButton();
+        btnReset = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblJurusan = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(204, 204, 204));
 
@@ -83,35 +149,55 @@ public class Jurusan2 extends javax.swing.JPanel {
 
         jLabel3.setText("Nama Jurusan");
 
-        jButton1.setBackground(new java.awt.Color(0, 153, 102));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/alumni202457201031/icons8-plus-24.png"))); // NOI18N
-        jButton1.setText("Tambah");
-        jButton1.setBorder(null);
+        btnTambah.setBackground(new java.awt.Color(0, 153, 102));
+        btnTambah.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnTambah.setForeground(new java.awt.Color(255, 255, 255));
+        btnTambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/alumni202457201031/icons8-plus-24.png"))); // NOI18N
+        btnTambah.setText("Tambah");
+        btnTambah.setBorder(null);
+        btnTambah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTambahActionPerformed(evt);
+            }
+        });
 
-        jButton2.setBackground(new java.awt.Color(255, 102, 0));
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/alumni202457201031/icons8-change-24.png"))); // NOI18N
-        jButton2.setText("Ubah");
-        jButton2.setBorder(null);
+        btnUbah.setBackground(new java.awt.Color(255, 102, 0));
+        btnUbah.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnUbah.setForeground(new java.awt.Color(255, 255, 255));
+        btnUbah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/alumni202457201031/icons8-change-24.png"))); // NOI18N
+        btnUbah.setText("Ubah");
+        btnUbah.setBorder(null);
+        btnUbah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUbahActionPerformed(evt);
+            }
+        });
 
-        jButton3.setBackground(new java.awt.Color(204, 51, 0));
-        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/alumni202457201031/icons8-remove-24.png"))); // NOI18N
-        jButton3.setText("Hapus");
-        jButton3.setBorder(null);
+        btnHapus.setBackground(new java.awt.Color(204, 51, 0));
+        btnHapus.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnHapus.setForeground(new java.awt.Color(255, 255, 255));
+        btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/alumni202457201031/icons8-remove-24.png"))); // NOI18N
+        btnHapus.setText("Hapus");
+        btnHapus.setBorder(null);
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHapusActionPerformed(evt);
+            }
+        });
 
-        jButton4.setBackground(new java.awt.Color(0, 204, 255));
-        jButton4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 255, 255));
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/alumni202457201031/icons8-reset-24.png"))); // NOI18N
-        jButton4.setText("Reset");
-        jButton4.setBorder(null);
+        btnReset.setBackground(new java.awt.Color(0, 204, 255));
+        btnReset.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnReset.setForeground(new java.awt.Color(255, 255, 255));
+        btnReset.setIcon(new javax.swing.ImageIcon(getClass().getResource("/alumni202457201031/icons8-reset-24.png"))); // NOI18N
+        btnReset.setText("Reset");
+        btnReset.setBorder(null);
+        btnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetActionPerformed(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblJurusan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -122,7 +208,12 @@ public class Jurusan2 extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        tblJurusan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblJurusanMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblJurusan);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -141,13 +232,13 @@ public class Jurusan2 extends javax.swing.JPanel {
                             .addComponent(jLabel3)
                             .addComponent(tNamajurusan, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnUbah, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 855, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(80, Short.MAX_VALUE))
         );
@@ -165,11 +256,11 @@ public class Jurusan2 extends javax.swing.JPanel {
                     .addComponent(tKodejurusan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnUbah, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 126, Short.MAX_VALUE))
@@ -183,20 +274,159 @@ public class Jurusan2 extends javax.swing.JPanel {
         repaint();
     }//GEN-LAST:event_btnCloseJurusanMouseClicked
 
+    private void tblJurusanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblJurusanMouseClicked
+        // Ambil indeks baris yang diklik oleh pengguna di tabel tblJurusan
+        int barisYangDipilih = tblJurusan.rowAtPoint(evt.getPoint());
+        
+        // Ambil nilai dari kolom pertama (indeks 0) pada baris yang dipilih, yaitu 'kode_jur'
+        String kodeJurusan = tblJurusan.getValueAt(barisYangDipilih, 0).toString();
+        
+        // Ambil nilai dari kolom kedua (indeks 1) pada baris yang dipilih, yaitu 'nama_jurusan'
+        String namaJurusan = tblJurusan.getValueAt(barisYangDipilih, 1).toString();
+        
+        // Tampilkan kode jurusan di text field tKodeJurusan
+        tKodejurusan.setText(kodeJurusan);
+        
+        // Tampilkan pengeditan pada text field kode jurusan (agar tidak bisa diubah)
+        tKodejurusan.setEditable(false);
+        
+        // Tampilkan nama jurusan di text field tNamaJurusan
+        tNamajurusan.setText(namaJurusan);
+    }//GEN-LAST:event_tblJurusanMouseClicked
+
+    private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
+        // Ambil input dari text field tKodeJurusan dan simpan ke dalam variabel kodeJurusan
+        String kodeJurusan = tKodejurusan.getText();
+        
+        // Ambil input dari text field tNamaJurusan dan simpan ke variabel namaJurusan
+        String namaJurusan = tNamajurusan.getText();
+        
+        // Query SQL untuk menyisipkan data ke tabel jurusan
+        String sql = "INSERT INTO jurusan(kode_jur, nama_jurusan) VALUES(?,?)";
+        
+        try {
+            // Buat koneksi ke database menggunakan method konek() dari class koneksi
+            Connection conn = koneksi.konek();
+            
+            // Siapkan query SQL untuk dieksekusi dengan parameter
+            PreparedStatement ps = conn.prepareStatement(sql);
+            
+            // Isi parameter pertama (?) dengan kode jurusan
+            ps.setString(1, kodeJurusan);
+            
+            // Isi parameter kedua (?) dengan nama jurusan
+            ps.setString(2, namaJurusan);
+            
+            // Jalankan query untuk menyimpan data ke database
+            ps.execute();
+            
+            // Tampilkan pesan bahwa data berhasil disimpan
+            JOptionPane.showMessageDialog(null, "Data berhasil disimpan!");   
+        } catch (SQLException sQLException) {
+            // Jika terjadi kesalahan saat menyimpan data, tampilkan pesan gagal
+            JOptionPane.showMessageDialog(null, "Data gagal disimpan!");
+        }
+        
+        // panggil method untuk memuat ulang data pada tabel jurusan
+        load_tabel_jurusan();
+        
+        // Panggil method untuk mereset atau mengosongkan inputan
+        reset();
+    }//GEN-LAST:event_btnTambahActionPerformed
+
+    private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
+        // Ambil input dari text field tKodeJurusan dan simpan ke variabel kodeJurusan
+        String kodeJurusan = tKodejurusan.getText();
+        
+        // Ambil input dari text field tNamaJurusan dan simpan ke variabel namaJurusan
+        String namaJurusan = tNamajurusan.getText();
+        
+        // Query SQL untuk mengubah data pada tabel jurusan
+        String sql = "UPDATE jurusan SET nama_jurusan=? WHERE kode_jur=?";
+        
+        try {
+            // Buat koneksi ke database menggunakan method konek() dari class koneksi
+            Connection conn = koneksi.konek();
+            
+            // Siapkan query SQL untuk dieksekusi dengan parameter
+            PreparedStatement ps = conn.prepareStatement(sql);
+            
+            // Isi parameter pertama (?) dengan kode jurusan
+            ps.setString(1, kodeJurusan);
+            
+            // Isi parameter kedua (?) dengan nama jurusan
+            ps.setString(2, namaJurusan);
+            
+            // jalankan query untuk menyimpan data ke database
+            ps.execute();
+            
+            // Tampilkan pesan bahwa data berhasil diubah
+            JOptionPane.showMessageDialog(null, "Data berhasil disimpan!");   
+        } catch (SQLException sQLException) {
+            // Jika terjadi kesalahan saat menyimpan data, tampilkan pesan gagal
+            JOptionPane.showMessageDialog(null, "Data gagal disimpan!");
+        }
+        
+        // Panggil method untuk memuat ulang data pada tabel jurusan
+        load_tabel_jurusan();
+        
+        // panggil method untuk mereset atau mengosongkan inputan
+        reset();
+    }//GEN-LAST:event_btnUbahActionPerformed
+
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        // Ambil input dari text field tKodeJurusan dan simpan ke variabel kodeJurusan
+        String kodeJurusan = tKodejurusan.getText();
+        
+        // Query SQL untuk data pada tabel jurusan berdasarkan kode_jur
+        String sql = "DELETE FROM jurusan WHERE kode_jur=?";
+        
+        try {
+            // Buat koneksi ke database menggunakan method konek() dari class koneksi
+            Connection conn = koneksi.konek();
+            
+            // Siapkan query SQL untuk dieksekusi dengan parameter
+            PreparedStatement ps = conn.prepareStatement(sql);
+        
+            // Isi parameter pertama (?) dengan kode jurusan
+            ps.setString(1, kodeJurusan);
+            
+            // Jalankan query untuk menyimpan data ke database
+            ps.execute();
+            
+            // Tanpilkan pesan bahwa data berhasil dihapus
+            JOptionPane.showMessageDialog(null, "Data berhasil disimpan!");   
+        } catch (SQLException sQLException) {
+            // Jika terjadi kesalahan saat mengahapus data, tampilkan pesan gagal 
+            JOptionPane.showMessageDialog(null, "Data gagal disimpan!");
+        }
+        
+        // Panggil method untuk memuat ulang data pada tabel jurusan
+        load_tabel_jurusan();
+        
+        // Panggil method untuk mereset atau mengosongkan inputan
+        reset();
+    }//GEN-LAST:event_btnHapusActionPerformed
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        // TODO add your handling code here:
+        reset();
+    }//GEN-LAST:event_btnResetActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel btnCloseJurusan;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton btnHapus;
+    private javax.swing.JButton btnReset;
+    private javax.swing.JButton btnTambah;
+    private javax.swing.JButton btnUbah;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField tKodejurusan;
     private javax.swing.JTextField tNamajurusan;
+    private javax.swing.JTable tblJurusan;
     // End of variables declaration//GEN-END:variables
 }
